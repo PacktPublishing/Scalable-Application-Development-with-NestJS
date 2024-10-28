@@ -1,0 +1,323 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:3000
+    description: url in development mode
+  # once deployed, we can add different environment urls
+  # - url: http://dev.e-commerce.com
+    # description: dev url for the server
+  # - url: http://staging.e-commerce.com
+    # description: dev url for the server
+info:
+  description: e-commerce application API documentation
+  version: "1.0.0"
+  title: Use case 1 e-commerce
+  contact:
+    email: admin@e-commerce.com
+    name: Admin
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: protected
+    description: Protected endpoints by an authorization token
+  - name: products
+    description: Products related endpoints
+paths:
+  /products:
+    get:
+      summary: List all products with pagination
+      tags:
+        - products
+      description: Get a list of all products with pagination options.
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/success'
+    post:
+      summary: Create a new product
+      tags:
+        - products
+        - protected
+        - admins
+      description: Create a new product in the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+  /products/{id}:
+    get:
+      summary: Get a product by ID
+      tags:
+        - products
+      description: Get a specific product by its unique identifier (id).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the product
+          schema:
+            $ref: '#/components/schemas/Id'
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+      responses:
+        '200':
+          $ref: '#/components/responses/success'
+    put:
+      summary: Update a product by ID
+      tags:
+        - products
+        - protected
+      description: Update an existing product by its unique identifier (id).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the product
+          schema:
+            type: string
+            format: uuid
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          $ref: '#/components/responses/success'
+    delete:
+      summary: Delete a product by ID
+      tags:
+        - products
+        - protected
+        - admins
+      description: Soft delete a product by its unique identifier (id).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the product
+          schema:
+            type: string
+            format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      responses:
+        '200':
+          $ref: '#/components/responses/success'
+  /products/{id}/orders:
+    get:
+      summary: List orders for a product with pagination
+      tags:
+        - products
+      description: Get a list of orders placed for a specific product with pagination options.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the product
+          schema:
+            $ref: '#/components/schemas/Id'
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/success'
+
+  /products/{id}/orders/{orderId}:
+    get:
+      summary: Get a specific order by ID for a product
+      tags:
+        - products
+      description: Get a specific order by its unique identifier (orderId) placed for a specific product.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the product
+          schema:
+            $ref: '#/components/schemas/Id'
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        - name: orderId
+          in: path
+          required: true
+          description: Unique identifier of the order
+          schema:
+            $ref: '#/components/schemas/Id'
+          example: '123e4567-e89b-12d3-a456-426614174000'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /products/{id}/reviews:
+    get:
+      summary: List reviews for a product with pagination
+      tags:
+        - products
+      description: Get a list of reviews for a specific product with pagination options.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the product
+          schema:
+            $ref: '#/components/schemas/Id'
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/success'
+  /products/search:
+    get:
+      summary: Search for products
+      tags:
+        - products
+      description: Search for products based on various criteria
+      parameters:
+        - name: keyword
+          in: query
+          description: Keyword to search for in product names or descriptions
+          schema:
+            type: string
+          example: "phone"
+        - name: minPrice
+          in: query
+          description: Minimum price for the product (optional)
+          schema:
+            type: number
+          example: 10.00
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+          example: 100.5
+          description: Maximum price to filter with
+      responses:
+        '200':
+          $ref: '#/components/responses/success'
+components:
+  schemas:
+    Id:
+      type: string
+      format: uuid
+    Order:
+      type: object
+      properties:
+        user:
+          type: string
+          format: uuid
+          description: the id of the user who placed the order
+        quantity:
+          type: integer
+          minimum: 1
+          example: 10
+        totalPrice:
+          type: number
+          example: 10001.902
+        payment:
+          type: string
+          description: the payment id attached to the order
+          example: 'ab470e73-4564-493d-a1ad-bbe2c86c4481'
+          format: uuid
+    APIResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        error:
+          type: object
+        data:
+          type: object
+      required:
+        - success
+        - message
+        - data
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '103003f3-60de-4713-8779-a694ee7a22c9'
+        name:
+          type: string
+          example: Arthur Dent
+      required:
+        - id
+        - name
+    BaseProduct:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'iPhone 15 Pro Max'
+        description:
+          type: string
+          example: 'This is a sample description of the product, admins should include all the details to help the user to chose wisely'
+        price:
+          type: number
+          example: 1200.03
+        brand:
+          type: string
+          example: 'Apple'
+        specs:
+          type: object
+          description: a key-value pair of specs for the product, if any
+          example: { 'Ram': '8Go', 'SSD': '1To', 'screen': '14inch' }
+    Product:
+      allOf:
+        - $ref: '#/components/schemas/BaseProduct'
+        - type: object
+          properties:
+            id:
+              type: string
+              example: 'bec5b84b-e9e7-49f6-854a-c2a9811f16e5'
+          required:
+            - id
+  parameters:
+    pageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      example: 1
+      schema:
+        type: integer
+        minimum: 1
+    limitParam:
+      name: limit
+      in: query
+      description: Number of items per page
+      example: 100
+      schema:
+        type: integer
+  responses:
+    success:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIResponse'
+    successfullCreate:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIResponse'
