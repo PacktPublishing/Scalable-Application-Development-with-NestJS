@@ -1,12 +1,11 @@
-import { Query } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Resolver } from '@nestjs/graphql';
+import { Query, Resolver } from '@nestjs/graphql';
 
 @Resolver()
-export class AppController {
+export class AppResolver {
   constructor(private readonly appService: AppService) {}
 
-  @Query(() => String)
+  @Query('getHello')
   getHello(): string {
     return this.appService.getHello();
   }

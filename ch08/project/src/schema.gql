@@ -41,3 +41,8 @@ input UpdateUserInput {
   email: String
   id: Int!
 }
+
+type Subscription {
+  userCreated: User!
+  userUpdated: User!
+}

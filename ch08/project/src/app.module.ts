@@ -16,6 +16,9 @@ import { UsersModule } from './users/users.module';
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       introspection: true,
       cache: 'bounded',
+      subscriptions: {
+        'graphql-ws': true,
+      },
     }),
     UsersModule,
   ],

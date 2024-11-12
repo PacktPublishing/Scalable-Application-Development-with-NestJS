@@ -30,9 +30,9 @@ export class UsersService {
   ];
 
   create(createUserInput: CreateUserInput) {
-    const newUser = { id: this.users.length + 1, ...createUserInput };
-    this.users.push(newUser);
-    return newUser;
+    const id = this.users.length + 1;
+    this.users.push({ id, ...createUserInput });
+    return { id, ...createUserInput };
   }
 
   findAll() {
