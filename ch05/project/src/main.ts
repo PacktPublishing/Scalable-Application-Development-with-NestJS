@@ -7,7 +7,8 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
-  })
+    // prefix: 'v',
+  });
   await app.listen(3000);
 }
 bootstrap();

@@ -1,0 +1,13 @@
+name: Deploy to Render 
+on: 
+  push: 
+    branches: ['develop', 'main'] 
+jobs: 
+  deploy: 
+    runs-on: ubuntu-latest 
+    steps: 
+      - name: Trigger Render Deployment 
+        uses: sws2apps/render-deployment@main 
+        with: 
+          serviceId: ${{ secrets.RENDER_SERVICE_ID }} 
+          apiKey: ${{ secrets.RENDER_API_KEY }} 

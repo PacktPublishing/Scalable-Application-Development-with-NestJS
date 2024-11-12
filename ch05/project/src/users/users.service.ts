@@ -1,17 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { User } from './entities/users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {
-  asyncUser,
-  postFactoryResult,
-  user,
-  userWithSymbol,
-  users,
-} from './factories/users.factories';
+import { ExternalUserDataService } from '../external-services/external-user-data.service';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @Inject('EXTERNAL_USER_DATA_SERVICE')
+    private externalUserService: ExternalUserDataService,
+  ) {}
+
   private readonly users: User[] = [
     {
       id: 1,
@@ -39,8 +38,8 @@ export class UsersService {
   ];
 
   async findAll(): Promise<User[]> {
-    console.log('SEE FACTORIES', users, postFactoryResult);
-    return this.users;
+    const externalUsers = await this.externalUserService.fetchUsers();
+    return [...this.users, ...externalUsers];
   }
 
   // findall v2 -- with pagination

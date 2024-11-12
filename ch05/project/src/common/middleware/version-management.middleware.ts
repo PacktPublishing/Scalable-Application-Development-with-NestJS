@@ -18,8 +18,6 @@ export class VersionManagementMiddleware implements NestMiddleware {
     } else if (!['v1', 'v2'].includes(firstPathSegment)) {
       // If an invalid version is detected, set to latest version ('v2' in this case)
       req.originalUrl = req.originalUrl.replace(firstPathSegment, 'v2');
-      // notify the client that the version sent in the request is invalid
-      // res.locals.invalidVersion = true;
     }
 
     next();
