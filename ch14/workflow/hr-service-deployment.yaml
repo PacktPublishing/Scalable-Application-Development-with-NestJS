@@ -1,0 +1,19 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: hr-service 
+spec: 
+  replicas: 3 
+  selector: 
+    matchLabels: 
+      app: hr-service 
+  template: 
+    metadata: 
+      labels: 
+        app: hr-service 
+    spec: 
+      containers: 
+      - name: hr-service 
+        image: your-docker-repo/hr-service:latest 
+        ports: 
+        - containerPort: 3001 
