@@ -57,7 +57,6 @@ export class UsersResolver {
     return pubSub.asyncIterableIterator('userCreated');
   }
 
-  // only return a portion of the user object - based on the updated fields
   @Subscription(() => User, {
     name: 'userUpdated',
   })

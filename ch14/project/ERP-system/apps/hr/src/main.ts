@@ -1,15 +1,10 @@
 import { NestFactory } from '@nestjs/core';
+import { HrModule } from './hr.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { OrderModule } from './order.module';
-import { otel } from 'tracing';
 
 async function bootstrap() {
-  const otelStd = otel('main');
-  await otelStd.start();
+  const app = await NestFactory.create(HrModule);
 
-  const app = await NestFactory.create(OrderModule);
-
-  // configure the microservice to listen on port 8001 using the TCP transport layer
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
@@ -18,7 +13,6 @@ async function bootstrap() {
     },
   });
 
-  // to connect to the microservices linked to the order module
   app.startAllMicroservices();
   await app.listen(3001);
 }

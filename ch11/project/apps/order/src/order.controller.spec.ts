@@ -8,7 +8,13 @@ describe('OrderController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [OrderController],
-      providers: [OrderService],
+      providers: [
+        OrderService,
+        {
+          provide: 'INVENTORY_SERVICE',
+          useValue: { emit: jest.fn() },
+        },
+      ],
     }).compile();
 
     orderController = app.get<OrderController>(OrderController);
@@ -16,7 +22,7 @@ describe('OrderController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(orderController.getHello()).toBe('Hello World!');
+      expect(orderController.getHello()).toBe('Hello World! -- Order Service');
     });
   });
 });
